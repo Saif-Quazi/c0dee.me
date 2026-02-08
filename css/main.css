@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+/* Login page */
+.container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 40px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #00d9ff;
+}
+
+p {
+  color: #888;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+input {
+  padding: 12px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #00d9ff;
+}
+
+button {
+  padding: 12px;
+  background: #00d9ff;
+  border: none;
+  border-radius: 4px;
+  color: #000;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #00b8d9;
+}
+
+button:active {
+  background: #0099b8;
+}
+
+.error {
+  margin-top: 16px;
+  padding: 12px;
+  background: #331111;
+  border: 1px solid #661111;
+  border-radius: 4px;
+  color: #ff6666;
+  font-size: 13px;
+  display: none;
+}
+
+.error.show {
+  display: block;
+}
+
+/* Viewer page */
+body.viewer {
+  overflow: hidden;
+  cursor: none; /* Hide cursor over remote screen */
+}
+
+#toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  z-index: 100;
+  border-bottom: 1px solid #333;
+}
+
+#status {
+  color: #0f0;
+  font-size: 20px;
+}
+
+#status.disconnected {
+  color: #f00;
+}
+
+#fps {
+  color: #888;
+  font-size: 13px;
+  font-family: monospace;
+}
+
+#disconnect {
+  margin-left: auto;
+  padding: 6px 16px;
+  font-size: 12px;
+}
+
+#screen {
+  display: block;
+  margin: 40px auto 0;
+  background: #000;
+  box-shadow: 0 0 40px rgba(0,217,255,0.3);
+}
+
+.warning {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: rgba(255,140,0,0.9);
+  color: #000;
+  font-size: 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}

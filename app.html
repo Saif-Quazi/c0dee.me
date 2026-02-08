@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Remote Browser</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="viewer">
+  <div id="toolbar">
+    <span id="status">●</span>
+    <span id="fps">0 FPS</span>
+    <button id="disconnect">Disconnect</button>
+  </div>
+  
+  <!-- Frame rendered here -->
+  <canvas id="screen" width="1280" height="720"></canvas>
+  
+  <div id="warning" class="warning">
+    Session active. Input is filtered (Win key, Alt+Tab blocked).
+  </div>
+
+  <script src="js/viewer.js"></script>
+  <script src="js/input.js"></script>
+</body>
+</html>
