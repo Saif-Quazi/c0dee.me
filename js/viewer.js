@@ -11,6 +11,26 @@ if (!token || !serverUrl) {
   window.location.href = "index.html";
 }
 
+function resizeCanvas() {
+  const availableHeight = window.innerHeight - 31;
+  const availableWidth = window.innerWidth;
+  const aspectRatio = 16 / 9;
+  
+  let width = availableWidth;
+  let height = width / aspectRatio;
+  
+  if (height > availableHeight) {
+    height = availableHeight;
+    width = height * aspectRatio;
+  }
+  
+  canvas.width = 1280;
+  canvas.height = 720;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
 let frameCount = 0;
 let lastFpsUpdate = Date.now();
 let active = true;

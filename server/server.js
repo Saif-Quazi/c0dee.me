@@ -179,10 +179,17 @@ function launchBrowser() {
   if (!browserPath) return;
   
   const args = [
-    "--kiosk", "--window-size=1280,720", "--window-position=0,0",
-    "--disable-infobars", "--disable-session-crashed-bubble",
-    "--disable-restore-session-state", "--no-first-run",
-    "--no-default-browser-check", "https://www.google.com"
+    "--kiosk",
+    "--window-size=1280,720",
+    "--window-position=0,0",
+    "--disable-infobars",
+    "--disable-session-crashed-bubble",
+    "--disable-restore-session-state",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-features=TranslateUI",
+    "--disable-popup-blocking",
+    "chrome://newtab"
   ];
   spawn(browserPath, args, { detached: true, stdio: "ignore" }).unref();
 }

@@ -90,27 +90,27 @@ button:active {
 /* Viewer page */
 body.viewer {
   overflow: hidden;
-  cursor: none; /* Hide cursor over remote screen */
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #toolbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background: rgba(0,0,0,0.9);
+  height: 31px;
+  background: rgba(0,0,0,0.95);
   display: flex;
   align-items: center;
   padding: 0 16px;
   gap: 16px;
-  z-index: 100;
   border-bottom: 1px solid #333;
+  flex-shrink: 0;
 }
 
 #status {
   color: #0f0;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 #status.disconnected {
@@ -119,32 +119,25 @@ body.viewer {
 
 #fps {
   color: #888;
-  font-size: 13px;
+  font-size: 12px;
   font-family: monospace;
 }
 
 #disconnect {
   margin-left: auto;
-  padding: 6px 16px;
-  font-size: 12px;
+  padding: 4px 12px;
+  font-size: 11px;
 }
 
 #screen {
-  display: block;
-  margin: 40px auto 0;
+  flex: 1;
+  width: 100%;
+  height: calc(100vh - 31px);
+  object-fit: contain;
   background: #000;
-  box-shadow: 0 0 40px rgba(0,217,255,0.3);
+  display: block;
 }
 
 .warning {
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px 16px;
-  background: rgba(255,140,0,0.9);
-  color: #000;
-  font-size: 12px;
-  border-radius: 4px;
-  font-weight: 500;
+  display: none;
 }
