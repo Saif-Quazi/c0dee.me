@@ -6,6 +6,7 @@ const sharp = require("sharp");
 const robot = require("robotjs");
 const { spawn } = require("child_process");
 const path = require("path");
+const fs = require("fs");
 
 require("dotenv").config();
 
@@ -52,10 +53,11 @@ setInterval(() => {
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && (origin.includes("c0dee.me") || origin.includes("github.io"))) {
+  if (origin && (origin.includes("c0dee.me") || origin.includes("github.io") || origin.includes("localhost"))) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
   }
   
   if (req.method === "OPTIONS") {
@@ -73,6 +75,7 @@ app.get("/", (req, res) => {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>c0dee.me</title>
+      <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖥️</text></svg>">
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -110,6 +113,11 @@ app.get("/", (req, res) => {
           height: 8px;
           background: #4caf50;
           border-radius: 50%;
+          animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
       </style>
     </head>
@@ -124,6 +132,10 @@ app.get("/", (req, res) => {
     </body>
     </html>
   `);
+});
+
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
 });
 
 app.post("/auth", (req, res) => {
@@ -285,7 +297,7 @@ function launchBrowser() {
     "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe"
   ];
   
-  const browserPath = browserPaths.find(p => require("fs").existsSync(p));
+  const browserPath = browserPaths.find(p => fs.existsSync(p));
   
   if (!browserPath) {
     console.log("⚠ Browser not found - skipping auto-launch");
@@ -302,19 +314,17 @@ function launchBrowser() {
     "--disable-restore-session-state",
     "--no-first-run",
     "--no-default-browser-check",
-    "about:blank"
+    "https://www.google.com"
   ];
   
   console.log(`✓ Launching browser: ${path.basename(browserPath)}`);
+  console.log("✓ Browser starting at Google.com");
   spawn(browserPath, args, { detached: true, stdio: "ignore" }).unref();
 }
 
 http.createServer(app).listen(PORT, "127.0.0.1", () => {
   console.log(`✓ Server running on http://127.0.0.1:${PORT}`);
-  console.log("✓ Bound to localhost only");
-  console.log("✓ Use Cloudflare Tunnel to expose with HTTPS");
-  console.log("\nTo expose:");
-  console.log(`  cloudflared tunnel --url http://127.0.0.1:${PORT}`);
+  console.log(`✓ Waiting for tunnel connection...`);
   
   if (process.env.LAUNCH_BROWSER !== "false") {
     setTimeout(launchBrowser, 2000);
