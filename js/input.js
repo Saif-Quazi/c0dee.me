@@ -45,10 +45,17 @@ function shouldThrottle() {
 screen.addEventListener("mousemove", (e) => {
   if (shouldThrottle()) return;
   
+  const rect = screen.getBoundingClientRect();
+  const scaleX = 1280 / rect.width;
+  const scaleY = 720 / rect.height;
+  
+  const screenX = Math.floor(e.offsetX * scaleX);
+  const screenY = Math.floor(e.offsetY * scaleY);
+  
   window.sendInput({
     type: "mousemove",
-    x: e.offsetX,
-    y: e.offsetY
+    x: screenX,
+    y: screenY
   });
 });
 

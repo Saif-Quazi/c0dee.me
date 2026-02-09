@@ -136,7 +136,11 @@ app.post("/input", requireAuth, (req, res) => {
   const { type, x, y, button, key, code, deltaX, deltaY } = req.body;
   
   try {
-    if (type === "mousemove") robot.moveMouse(Math.floor(x), Math.floor(y));
+    const screenSize = robot.getScreenSize();
+    const scaledX = Math.floor((x / 1280) * screenSize.width);
+    const scaledY = Math.floor((y / 720) * screenSize.height);
+    
+    if (type === "mousemove") robot.moveMouse(scaledX, scaledY);
     else if (type === "mousedown") robot.mouseToggle("down", button === 2 ? "right" : button === 1 ? "middle" : "left");
     else if (type === "mouseup") robot.mouseToggle("up", button === 2 ? "right" : button === 1 ? "middle" : "left");
     else if (type === "wheel") robot.scrollMouse(Math.floor(deltaX), Math.floor(deltaY));
