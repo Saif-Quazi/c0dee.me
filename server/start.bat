@@ -24,13 +24,13 @@ timeout /t 2 /nobreak >nul
 
 echo [2/2] Starting Cloudflare tunnel...
 echo.
-echo Your server will be available at:
+echo Your server is now available at:
 echo   https://api.c0dee.me
 echo.
-echo Access the control panel at:
+echo Control it from any device at:
 echo   https://c0dee.me
 echo.
 echo Press Ctrl+C to stop
 echo.
 
-cloudflared tunnel --url http://127.0.0.1:3000 
+cloudflared tunnel run c0dee-server 
