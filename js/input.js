@@ -45,22 +45,35 @@ function shouldThrottle() {
 screen.addEventListener("mousemove", (e) => {
   if (shouldThrottle()) return;
   
-  const rect = screen.getBoundingClientRect();
-  const scaleX = 1280 / rect.width;
-  const scaleY = 720 / rect.height;
+  const bounds = window.getStreamBounds();
+  const relativeX = e.offsetX - bounds.x;
+  const relativeY = e.offsetY - bounds.y;
   
-  const screenX = Math.floor(e.offsetX * scaleX);
-  const screenY = Math.floor(e.offsetY * scaleY);
+  if (relativeX < 0 || relativeX > bounds.width || relativeY < 0 || relativeY > bounds.height) {
+    return;
+  }
+  
+  const streamX = Math.floor((relativeX / bounds.width) * 1280);
+  const streamY = Math.floor((relativeY / bounds.height) * 720);
   
   window.sendInput({
     type: "mousemove",
-    x: screenX,
-    y: screenY
+    x: streamX,
+    y: streamY
   });
 });
 
 screen.addEventListener("mousedown", (e) => {
   e.preventDefault();
+  
+  const bounds = window.getStreamBounds();
+  const relativeX = e.offsetX - bounds.x;
+  const relativeY = e.offsetY - bounds.y;
+  
+  if (relativeX < 0 || relativeX > bounds.width || relativeY < 0 || relativeY > bounds.height) {
+    return;
+  }
+  
   window.sendInput({
     type: "mousedown",
     button: e.button
@@ -69,6 +82,15 @@ screen.addEventListener("mousedown", (e) => {
 
 screen.addEventListener("mouseup", (e) => {
   e.preventDefault();
+  
+  const bounds = window.getStreamBounds();
+  const relativeX = e.offsetX - bounds.x;
+  const relativeY = e.offsetY - bounds.y;
+  
+  if (relativeX < 0 || relativeX > bounds.width || relativeY < 0 || relativeY > bounds.height) {
+    return;
+  }
+  
   window.sendInput({
     type: "mouseup",
     button: e.button

@@ -12,24 +12,38 @@ if (!token || !serverUrl) {
 }
 
 function resizeCanvas() {
-  const availableHeight = window.innerHeight - 31;
-  const availableWidth = window.innerWidth;
-  const aspectRatio = 16 / 9;
-  
-  let width = availableWidth;
-  let height = width / aspectRatio;
-  
-  if (height > availableHeight) {
-    height = availableHeight;
-    width = height * aspectRatio;
-  }
-  
   canvas.width = 1280;
   canvas.height = 720;
+  canvas.style.width = "100vw";
+  canvas.style.height = "100vh";
 }
 
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
+
+function getStreamBounds() {
+  const canvasRect = canvas.getBoundingClientRect();
+  const canvasAspect = canvasRect.width / canvasRect.height;
+  const streamAspect = 1280 / 720;
+  
+  let streamWidth, streamHeight, streamX, streamY;
+  
+  if (canvasAspect > streamAspect) {
+    streamHeight = canvasRect.height;
+    streamWidth = streamHeight * streamAspect;
+    streamX = (canvasRect.width - streamWidth) / 2;
+    streamY = 0;
+  } else {
+    streamWidth = canvasRect.width;
+    streamHeight = streamWidth / streamAspect;
+    streamX = 0;
+    streamY = (canvasRect.height - streamHeight) / 2;
+  }
+  
+  return { x: streamX, y: streamY, width: streamWidth, height: streamHeight };
+}
+
+window.getStreamBounds = getStreamBounds;
 
 let frameCount = 0;
 let lastFpsUpdate = Date.now();
