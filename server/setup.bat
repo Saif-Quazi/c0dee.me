@@ -36,23 +36,20 @@ echo.
 :tunnel_setup
 echo [2/3] Setting up Cloudflare tunnel...
 echo.
-echo This will connect api.c0dee.me to your server.
+echo This will connect c0dee.me to your server.
 echo A browser window will open to login to Cloudflare.
 echo.
 pause
 
-cloudflared tunnel login
+powershell -ExecutionPolicy Bypass -File configure-tunnel.ps1
 if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to login to Cloudflare
+    echo ERROR: Tunnel setup failed
     pause
     exit /b 1
 )
 
-cloudflared tunnel create c0dee-server 2>nul
-cloudflared tunnel route dns c0dee-server api.c0dee.me
-
 echo.
-echo [OK] Tunnel configured for api.c0dee.me
+echo [OK] Tunnel configured for c0dee.me
 echo.
 
 :password_check
@@ -81,10 +78,7 @@ echo ===================================
 echo   Setup Complete!
 echo ===================================
 echo.
-echo Your server will be accessible at:
-echo   https://api.c0dee.me
-echo.
-echo Control it from:
+echo Your server is accessible at:
 echo   https://c0dee.me
 echo.
 echo To start the server, run:
