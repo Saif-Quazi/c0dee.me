@@ -1,87 +1,68 @@
 @echo off
 setlocal enabledelayedexpansion
 
+cls
 echo.
-echo ===================================
-echo   c0dee.me Setup
-echo ===================================
+echo ============================
+echo   c0dee.me Server Setup
+echo ============================
 echo.
 
-echo [1/3] Checking cloudflared...
 where cloudflared >nul 2>nul
-if %ERRORLEVEL% EQU 0 (
-    echo [OK] cloudflared is already installed
-    goto :tunnel_setup
-)
-
-echo Installing cloudflared...
-echo.
-winget install Cloudflare.cloudflared
-
 if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo ERROR: Failed to install cloudflared
-    echo.
-    echo Please install manually from:
-    echo https://github.com/cloudflare/cloudflared/releases
-    echo.
-    pause
-    exit /b 1
+    echo [1/3] Installing cloudflared...
+    winget install Cloudflare.cloudflared
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERROR: Installation failed
+        echo Install manually from: https://github.com/cloudflare/cloudflared/releases
+        pause
+        exit /b 1
+    )
+) else (
+    echo [1/3] cloudflared already installed
 )
 
 echo.
-echo [OK] cloudflared installed successfully
+echo [2/3] Configuring Cloudflare tunnel...
 echo.
-
-:tunnel_setup
-echo [2/3] Setting up Cloudflare tunnel...
-echo.
-echo This will connect c0dee.me to your server.
-echo A browser window will open to login to Cloudflare.
+echo This creates api.c0dee.me and routes it to your PC.
+echo A browser will open - login to Cloudflare.
 echo.
 pause
 
-powershell -ExecutionPolicy Bypass -File configure-tunnel.ps1
+cloudflared tunnel login
 if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Tunnel setup failed
+    echo ERROR: Cloudflare login failed
     pause
     exit /b 1
 )
 
-echo.
-echo [OK] Tunnel configured for c0dee.me
-echo.
+cloudflared tunnel create c0dee-server 2>nul
+cloudflared tunnel route dns c0dee-server api.c0dee.me 2>nul
 
-:password_check
-echo [3/3] Setting up password...
+for /f "delims=" %%i in ('cloudflared tunnel list --output json') do set JSON=%%i
+powershell -Command "$t = '%JSON%' | ConvertFrom-Json | Where {$_.name -eq 'c0dee-server'}; if($t){$id=$t.id; $cfg=\"tunnel: $id`ncredentials-file: $env:USERPROFILE\.cloudflared\$id.json`n`ningress:`n  - hostname: api.c0dee.me`n    service: http://127.0.0.1:3000`n  - service: http_status:404\"; Set-Content \"$env:USERPROFILE\.cloudflared\config.yml\" $cfg}"
+
+echo.
+echo [3/3] Setting password...
 if exist .env (
-    echo [OK] Password already configured
+    echo Password already set
     goto :done
 )
 
 echo.
-set /p PASSWORD="Enter a password for remote access: "
-
-node hash-password.js "!PASSWORD!" --save
-
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to set password
-    pause
-    exit /b 1
-)
-
-echo.
+set /p PASS="Enter password for remote access: "
+node hash-password.js "!PASS!" --save
 
 :done
 echo.
-echo ===================================
+echo ============================
 echo   Setup Complete!
-echo ===================================
+echo ============================
 echo.
-echo Your server is accessible at:
-echo   https://c0dee.me
+echo Backend API: https://api.c0dee.me
+echo Frontend: https://c0dee.me
 echo.
-echo To start the server, run:
-echo   start.bat
+echo Run start.bat to start the server
 echo.
 pause

@@ -1,45 +1,46 @@
 # c0dee.me Server
 
-Simple remote browser control via c0dee.me
+Backend API for remote browser control.
 
-## Setup (One-time)
+## Quick Start
 
-Run this once:
-
+### 1. Setup (once)
 ```
 setup.bat
 ```
+- Installs cloudflared
+- Configures api.c0dee.me tunnel
+- Sets password
 
-This will:
-- Install cloudflared (if needed)
-- Login to Cloudflare and create tunnel
-- Configure c0dee.me DNS
-- Set up your password
-
-## Start Server
-
+### 2. Start
 ```
 start.bat
 ```
+- Runs Node.js server
+- Starts Cloudflare tunnel
+- Launches browser in kiosk mode
 
-This starts:
-- Node.js server (port 3000)
-- Cloudflare tunnel (exposes as c0dee.me)
-- Browser in kiosk mode (Google.com)
+### 3. Use
+- Visit https://c0dee.me from any device
+- Enter your password
+- Control the browser remotely
 
-Then visit **https://c0dee.me** from any device and enter your password.
+## Architecture
 
-## Troubleshooting
+- **c0dee.me** → Frontend (HTML/JS)
+- **api.c0dee.me** → This backend API
+- **Cloudflare Tunnel** → Routes traffic to localhost:3000
 
-If you get "ERR_NAME_NOT_RESOLVED" or "Failed to fetch":
+## API Endpoints
 
-1. **Run `check-status.bat`** to see what's wrong
-2. **If tunnel config is missing:** Run `setup.bat` again
-3. **If tunnel isn't running:** Make sure `start.bat` is still running
+- `POST /auth` - Authenticate with password
+- `GET /frame` - Get screenshot (requires auth)
+- `POST /input` - Send keyboard/mouse input (requires auth)
 
 ## Files
 
 - `setup.bat` - One-time setup
-- `start.bat` - Start server + tunnel
-- `check-status.bat` - Check if everything is running
-- `server.js` - Main server code
+- `start.bat` - Start everything
+- `server.js` - Main API server
+- `hash-password.js` - Password utility
+- `.env` - Configuration (auto-generated)
