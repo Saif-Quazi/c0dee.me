@@ -25,23 +25,33 @@ if %ERRORLEVEL% NEQ 0 (
 echo.
 echo [2/3] Configuring Cloudflare tunnel...
 echo.
-echo This creates api.c0dee.me and routes it to your PC.
-echo A browser will open - login to Cloudflare.
-echo.
-pause
 
-cloudflared tunnel login
+if not exist "%USERPROFILE%\.cloudflared\cert.pem" (
+    echo Logging in to Cloudflare...
+    cloudflared tunnel login
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERROR: Cloudflare login failed
+        pause
+        exit /b 1
+    )
+) else (
+    echo Already logged in to Cloudflare
+)
+
+echo Creating tunnel c0dee-server...
+cloudflared tunnel create c0dee-server 2>nul
+
+echo Setting up DNS for api.c0dee.me...
+cloudflared tunnel route dns c0dee-server api.c0dee.me 2>nul
+
+echo Generating config file...
+powershell -Command "$tunnels = cloudflared tunnel list --output json 2>$null | Out-String | ConvertFrom-Json; $tunnel = $tunnels | Where-Object { $_.name -eq 'c0dee-server' } | Select-Object -First 1; if ($tunnel) { $id = $tunnel.id; $cfg = \"tunnel: $id`ncredentials-file: $env:USERPROFILE\.cloudflared\$id.json`n`ningress:`n  - hostname: api.c0dee.me`n    service: http://127.0.0.1:3000`n  - service: http_status:404\"; New-Item -Force -Path \"$env:USERPROFILE\.cloudflared\" -ItemType Directory | Out-Null; Set-Content -Path \"$env:USERPROFILE\.cloudflared\config.yml\" -Value $cfg; Write-Host 'Tunnel configured' } else { Write-Host 'ERROR: Tunnel not found'; exit 1 }"
+
 if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Cloudflare login failed
+    echo ERROR: Failed to configure tunnel
     pause
     exit /b 1
 )
-
-cloudflared tunnel create c0dee-server 2>nul
-cloudflared tunnel route dns c0dee-server api.c0dee.me 2>nul
-
-for /f "delims=" %%i in ('cloudflared tunnel list --output json') do set JSON=%%i
-powershell -Command "$t = '%JSON%' | ConvertFrom-Json | Where {$_.name -eq 'c0dee-server'}; if($t){$id=$t.id; $cfg=\"tunnel: $id`ncredentials-file: $env:USERPROFILE\.cloudflared\$id.json`n`ningress:`n  - hostname: api.c0dee.me`n    service: http://127.0.0.1:3000`n  - service: http_status:404\"; Set-Content \"$env:USERPROFILE\.cloudflared\config.yml\" $cfg}"
 
 echo.
 echo [3/3] Setting password...
